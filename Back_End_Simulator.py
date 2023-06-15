@@ -1,10 +1,10 @@
 import csv
 import re
 
-class self:
+class Validador:
     def validar_nome(self, nome):
         if re.search(r'\d', nome):  # Verifica se o nome contém números
-            self.vnome = False
+            self.vnome = [False,nome]
             return False
         if len(nome) < 2 or len(nome) > 25:  # Verifica se o nome tem tamanho válido (entre 2 e 25 caracteres)
             self.vnome = False
@@ -16,7 +16,7 @@ class self:
 
     def validar_senha(self, senha):
         if len(senha) < 4 or len(senha) > 25:  # Verifica se a senha tem tamanho válido (entre 4 e 25 caracteres)
-            self.vsenha = False
+            self.vsenha = [False,senha]
             return False
         
         self.vsenha = True
@@ -28,7 +28,7 @@ class self:
             self.vnumero = True
             return True
 
-        self.vnumero = False
+        self.vnumero = [False,numero]
         return False
 
     def validar_email(self, email):
@@ -37,12 +37,12 @@ class self:
             self.vemail = True
             return True
         
-        self.vemail = False
+        self.vemail = [False,email]
         return False
 
     def validar_endereco(self, endereco):
         if len(endereco) > 60:  # Verifica se o endereço tem no máximo 60 caracteres
-            self.vendereco = False
+            self.vendereco = [False,endereco]
             return False
         
 
@@ -50,32 +50,36 @@ class self:
         return True
     
     def validar_request(self,request):
-        if self.validar_nome(request['nome']) and self.validar_email(request['email']) \
-        and self.validar_numero(request['numero']) and self.validar_endereco(request['endereco']) \
-        and self.validar_senha(request['senha']):
+        self.validar_nome(request['nome'])
+        self.validar_email(request['email'])
+        self.validar_numero(request['numero'])
+        self.validar_endereco(request['endereco'])
+        self.validar_senha(request['senha'])
+
+        if  self.vnome and self.vemail and self.vnumero and self.vendereco and self.vsenha:
             response = "Dados Válidos, enviando ao Banco de Dados..."
             print(response)
-            salvar_no_banco_de_dados(request)
             return 'sucesso'
 
         else:
             print("Há dados invalidos!:")
-            response = ''
-            if not self.vnome:
-                response += 'nome, '
-            if not self.vemail:
-                response += 'email, '
-            if not self.vnumero:
-                response += 'numero, '
-            if not self.vsenha:
-                response += 'senha, '
-            if not self.vendereco:
-                response += 'endereco, '
+            response = []
+            if not self.vnome[0]:
+                response.append(self.vnome[1])
+            if not self.vemail[0]:
+                response.append(self.vemail[1])
+            if not self.vnumero[0]:
+                response.append(self.vnumero[1])
+            if not self.vsenha[0]:
+                response.append(self.vsenha[1])
+            if not self.vendereco[0]:
+                response.append(self.vendereco[1])
+
             print(response)
-            return response
+            return response,request
 
         
-
+'''
 def salvar_no_banco_de_dados(dados):
     with open('dados.csv', 'a', newline='') as arquivo_csv:
         writer = csv.DictWriter(arquivo_csv, fieldnames=['Nome', 'Email', 'Número', 'Endereço', 'Senha'])
@@ -85,6 +89,6 @@ def salvar_no_banco_de_dados(dados):
             writer.writeheader()
         
         writer.writerow(dados)
-
+'''
 
     
