@@ -11,7 +11,7 @@ class Validador:
             return False
         
 
-        self.vnome = True
+        self.vnome = [True,'a']
         return True
 
     def validar_senha(self, senha):
@@ -19,13 +19,13 @@ class Validador:
             self.vsenha = [False,senha]
             return False
         
-        self.vsenha = True
+        self.vsenha = [True,'a']
         return True
 
     def validar_numero(self, numero):
         if re.match(r'^\d{2}-\d{5}-\d{4}$', numero) or re.match(r'^\d{11}$', numero) or re.match(r'^\(\d{2}\)\d{9}$', numero):
             # Verifica se o número está nos formatos válidos xx-xxxxx-xxxx, xxxxxxxxxxx ou (xx)xxxxxxxxx
-            self.vnumero = True
+            self.vnumero = [True,'a']
             return True
 
         self.vnumero = [False,numero]
@@ -34,7 +34,7 @@ class Validador:
     def validar_email(self, email):
         if re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
             # Verifica se o email está no formato válido
-            self.vemail = True
+            self.vemail = [True,'a']
             return True
         
         self.vemail = [False,email]
@@ -46,7 +46,7 @@ class Validador:
             return False
         
 
-        self.vendereco = True
+        self.vendereco = [True,'']
         return True
     
     def validar_request(self,request):
@@ -56,7 +56,7 @@ class Validador:
         self.validar_endereco(request['endereco'])
         self.validar_senha(request['senha'])
 
-        if  self.vnome and self.vemail and self.vnumero and self.vendereco and self.vsenha:
+        if  self.vnome[0] and self.vemail[0] and self.vnumero[0] and self.vendereco[0] and self.vsenha[0]:
             response = "Dados Válidos, enviando ao Banco de Dados..."
             print(response)
             return 'sucesso'
@@ -65,18 +65,23 @@ class Validador:
             print("Há dados invalidos!:")
             response = []
             if not self.vnome[0]:
+                response.append('nome:')
                 response.append(self.vnome[1])
             if not self.vemail[0]:
+                response.append('email:')
                 response.append(self.vemail[1])
             if not self.vnumero[0]:
+                response.append('numero:')
                 response.append(self.vnumero[1])
             if not self.vsenha[0]:
+                response.append('senha:')
                 response.append(self.vsenha[1])
             if not self.vendereco[0]:
+                response.append('endereco:')
                 response.append(self.vendereco[1])
 
             print(response)
-            return response,request
+            return response
 
         
 '''
